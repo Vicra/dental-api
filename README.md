@@ -1,3 +1,9 @@
+## Node Version
+
+```bash
+v20.14.0
+```
+
 ## Installation
 
 ```bash
@@ -29,3 +35,16 @@ $ yarn run test:e2e
 # test coverage
 $ yarn run test:cov
 ```
+
+npx prisma
+npx prisma init
+
+npx prisma migrate dev --name init
+
+# run seed
+
+npx prisma db seed
+
+# every database change
+
+npx prisma generate
