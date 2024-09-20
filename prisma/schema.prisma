@@ -19,13 +19,14 @@ enum Sex {
 }
 
 model Address {
-  id       Int       @id @default(autoincrement())
+  id       String       @id @default(uuid())
   street   String
   city     String
   country  String
   phone    String
   Patient  Patient?
   Location Location?
+  @@map("addresses")
 }
 
 model Patient {
@@ -36,8 +37,9 @@ model Patient {
   phone       String
   dob         DateTime
   address     Address       @relation(fields: [addressId], references: [id])
-  addressId   Int           @unique
+  addressId   String           @unique
   appointment Appointment[]
+  @@map("patients")
 }
 
 model Appointment {
@@ -51,6 +53,7 @@ model Appointment {
   locationId     Int
   prescription   Prescription? @relation(fields: [prescriptionId], references: [id])
   prescriptionId Int?          @unique
+  @@map("appointments")
 }
 
 model Prescription {
@@ -58,6 +61,7 @@ model Prescription {
   patientAge  Int
   drugs       PrescriptionItem[]
   Appointment Appointment?
+  @@map("precriptions")
 }
 
 model PrescriptionItem {
@@ -69,14 +73,16 @@ model PrescriptionItem {
   observation    String
   Prescription   Prescription? @relation(fields: [prescriptionId], references: [id])
   prescriptionId Int?
+  @@map("precription_items")
 }
 
 model Location {
   id          Int           @id @default(autoincrement())
   name        String
   address     Address       @relation(fields: [addressId], references: [id])
-  addressId   Int           @unique
+  addressId   String           @unique
   appointment Appointment[]
+  @@map("locations")
 }
 
 model Medication {
@@ -84,6 +90,7 @@ model Medication {
   sku              String?
   name             String
   PrescriptionItem PrescriptionItem[]
+  @@map("medications")
 }
 
 model User {
@@ -93,6 +100,7 @@ model User {
   role        Role          @default(DOCTOR)
   Appointment Appointment[]
   specialty   Specialties   @default(DENTIST)
+  @@map("users")
 }
 
 enum Role {

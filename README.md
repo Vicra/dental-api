@@ -48,3 +48,8 @@ npx prisma db seed
 # every database change
 
 npx prisma generate
+
+
+# docker
+
+MYSQL_ROOT_PASSWORD=my-secret
