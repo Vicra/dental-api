@@ -14,25 +14,49 @@ export class PatientService {
   }
 
   // Get a list of all patients
-  async getAllPatients(): Promise<any[]> {
-    return this.prisma.patient.findMany({
-      select: {
-        id: true,
-        name: true,
-        sex: true,
-        email: true,
-        phone: true,
-        dob: true,
-        address: {
-          select: {
-            street: true,
-            city: true,
-            country: true,
-            phone: true,
+  async getAllPatients(doctorId?: string): Promise<any[]> {
+    if (doctorId) {
+      return this.prisma.patient.findMany({
+        select: {
+          id: true,
+          name: true,
+          sex: true,
+          email: true,
+          phone: true,
+          dob: true,
+          address: {
+            select: {
+              street: true,
+              city: true,
+              country: true,
+              phone: true,
+            },
           },
         },
-      },
-    });
+        where: {
+          userId: doctorId,
+        },
+      });
+    } else {
+      return this.prisma.patient.findMany({
+        select: {
+          id: true,
+          name: true,
+          sex: true,
+          email: true,
+          phone: true,
+          dob: true,
+          address: {
+            select: {
+              street: true,
+              city: true,
+              country: true,
+              phone: true,
+            },
+          },
+        },
+      });
+    }
   }
 
   // Get a single patient by ID
@@ -59,7 +83,10 @@ export class PatientService {
   }
 
   // Update a patient
-  async updatePatient(id: number, data: Prisma.PatientUpdateInput): Promise<Patient> {
+  async updatePatient(
+    id: number,
+    data: Prisma.PatientUpdateInput,
+  ): Promise<Patient> {
     return this.prisma.patient.update({
       where: { id },
       data,

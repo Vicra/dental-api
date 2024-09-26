@@ -7,6 +7,7 @@ import {
   Delete,
   Patch,
   Put,
+  Query,
 } from '@nestjs/common';
 import { PatientService } from './patient.service';
 import { Prisma, Patient } from '@prisma/client';
@@ -22,9 +23,11 @@ export class PatientController {
     return this.patientService.createPatient(data);
   }
 
-  @Get()
-  async getAllPatients(): Promise<Patient[]> {
-    return this.patientService.getAllPatients();
+  @Get('')
+  async getAllPatients(
+    @Query('doctorId') doctorId?: string,
+  ): Promise<Patient[]> {
+    return this.patientService.getAllPatients(doctorId);
   }
 
   @Get(':id')
