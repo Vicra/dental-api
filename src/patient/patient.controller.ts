@@ -6,21 +6,19 @@ import {
   Param,
   Delete,
   Patch,
-  Put,
   Query,
 } from '@nestjs/common';
 import { PatientService } from './patient.service';
 import { Prisma, Patient } from '@prisma/client';
+import { CreatePatientDto } from './dto/create-patient.dto';
 
 @Controller('patients')
 export class PatientController {
   constructor(private readonly patientService: PatientService) {}
 
   @Post()
-  async createPatient(
-    @Body() data: Prisma.PatientCreateInput,
-  ): Promise<Patient> {
-    return this.patientService.createPatient(data);
+  async createPatient(@Body() createPatientDto: CreatePatientDto) {
+    return this.patientService.createPatient(createPatientDto);
   }
 
   @Get('')

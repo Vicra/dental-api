@@ -14,8 +14,9 @@ generator client {
 }
 
 enum Sex {
-    MALE
-    FEMALE
+    MALE @map("M")
+    FEMALE @map("F")
+    INTERSEX @map("I")
 }
 
 model Address {

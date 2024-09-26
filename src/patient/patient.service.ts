@@ -1,16 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Prisma, Patient } from '@prisma/client';
+import { CreatePatientDto } from './dto/create-patient.dto';
 
 @Injectable()
 export class PatientService {
   constructor(private prisma: PrismaService) {}
 
-  // Create a new patient
-  async createPatient(data: Prisma.PatientCreateInput): Promise<Patient> {
-    return this.prisma.patient.create({
-      data,
+  async createPatient(createPatientDto: CreatePatientDto) {
+    const { address, ...patientData } = createPatientDto;
+
+    const patientExists = await this.prisma.patient.findUnique({
+      where: {
+        email: patientData.email,
+      },
     });
+
+    if (!patientExists) {
+      const patient = await this.prisma.patient.create({
+        data: {
+          ...patientData,
+          address: {
+            create: {
+              ...address,
+            },
+          },
+        },
+        include: {
+          address: true,
+        },
+      });
+      return patient;
+    } else {
+      throw new BadRequestException('Email already exists', {
+        cause: new Error(),
+        description: 'Try using a different email',
+      });
+    }
   }
 
   // Get a list of all patients
