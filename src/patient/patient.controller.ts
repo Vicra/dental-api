@@ -7,6 +7,7 @@ import {
   Delete,
   Patch,
   Query,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { PatientService } from './patient.service';
 import { Prisma, Patient } from '@prisma/client';
@@ -26,9 +27,11 @@ export class PatientController {
 
   @Get('')
   async getAllPatients(
+    @Query('offset', new DefaultValuePipe(0)) offset: number,
+    @Query('limit', new DefaultValuePipe(10)) limit: number,
     @Query('doctorId') doctorId?: string,
   ): Promise<Patient[]> {
-    return this.patientService.getAllPatients(doctorId);
+    return this.patientService.getAllPatients(offset, limit, doctorId);
   }
 
   @Get(':id')

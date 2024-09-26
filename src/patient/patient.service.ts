@@ -57,7 +57,11 @@ export class PatientService {
   }
 
   // Get a list of all patients
-  async getAllPatients(doctorId?: string): Promise<any[]> {
+  async getAllPatients(
+    offset: number,
+    limit: number,
+    doctorId?: string,
+  ): Promise<any[]> {
     if (doctorId) {
       return this.prisma.patient.findMany({
         select: {
@@ -79,6 +83,8 @@ export class PatientService {
         where: {
           userId: doctorId,
         },
+        skip: offset,
+        take: limit,
       });
     } else {
       return this.prisma.patient.findMany({
@@ -99,6 +105,8 @@ export class PatientService {
             },
           },
         },
+        skip: offset,
+        take: limit,
       });
     }
   }
