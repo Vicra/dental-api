@@ -25,8 +25,8 @@ model Address {
     city     String
     country  String
     phone    String
-    Patient  Patient?
-    Location Location?
+    patient  Patient?
+    location Location?
 
     @@map("addresses")
 }
@@ -41,7 +41,7 @@ model Patient {
     address     Address       @relation(fields: [addressId], references: [id])
     addressId   String        @unique
     appointment Appointment[]
-    User        User?         @relation(fields: [userId], references: [id])
+    user        User?         @relation(fields: [userId], references: [id])
     userId      String?
 
     @@map("patients")
@@ -66,7 +66,7 @@ model Prescription {
     id          Int                @id @default(autoincrement())
     patientAge  Int
     drugs       PrescriptionItem[]
-    Appointment Appointment?
+    appointment Appointment?
 
     @@map("precriptions")
 }
@@ -78,7 +78,7 @@ model PrescriptionItem {
     amount         Int
     dose           String
     observation    String
-    Prescription   Prescription? @relation(fields: [prescriptionId], references: [id])
+    prescription   Prescription? @relation(fields: [prescriptionId], references: [id])
     prescriptionId Int?
 
     @@map("precription_items")
@@ -98,7 +98,7 @@ model Medication {
     id               Int                @id @default(autoincrement())
     sku              String?
     name             String
-    PrescriptionItem PrescriptionItem[]
+    prescriptionItem PrescriptionItem[]
 
     @@map("medications")
 }
@@ -108,10 +108,9 @@ model User {
     email       String        @unique
     name        String
     role        Role          @default(DOCTOR)
-    Appointment Appointment[]
+    appointments Appointment[]
     specialty   Specialties   @default(DENTIST)
     patients    Patient[]
-
     @@map("users")
 }
 

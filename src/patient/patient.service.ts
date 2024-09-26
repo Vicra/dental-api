@@ -1,13 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Prisma, Patient } from '@prisma/client';
-import { CreatePatientDto } from './dto/create-patient.dto';
+// import { CreatePatientDto } from './dto/create-patient.dto';
 
 @Injectable()
 export class PatientService {
   constructor(private prisma: PrismaService) {}
 
-  async createPatient(createPatientDto: CreatePatientDto) {
+  async createPatient(createPatientDto: any, doctorId: string) {
     const { address, ...patientData } = createPatientDto;
 
     const patientExists = await this.prisma.patient.findUnique({
@@ -17,20 +17,37 @@ export class PatientService {
     });
 
     if (!patientExists) {
-      const patient = await this.prisma.patient.create({
-        data: {
-          ...patientData,
-          address: {
-            create: {
-              ...address,
-            },
-          },
-        },
-        include: {
-          address: true,
+      const doctorExists = await this.prisma.user.findUnique({
+        where: {
+          id: doctorId,
         },
       });
-      return patient;
+      if (doctorExists != null) {
+        const patient = await this.prisma.patient.create({
+          data: {
+            ...patientData,
+            user: {
+              connect: {
+                id: doctorId,
+              },
+            },
+            address: {
+              create: {
+                ...address,
+              },
+            },
+          },
+          include: {
+            address: true,
+          },
+        });
+        return patient;
+      } else {
+        throw new BadRequestException('Doctor does not exist', {
+          cause: new Error(),
+          description: 'Check userId',
+        });
+      }
     } else {
       throw new BadRequestException('Email already exists', {
         cause: new Error(),
@@ -72,6 +89,7 @@ export class PatientService {
           email: true,
           phone: true,
           dob: true,
+          userId: true,
           address: {
             select: {
               street: true,

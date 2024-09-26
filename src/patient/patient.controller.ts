@@ -17,8 +17,11 @@ export class PatientController {
   constructor(private readonly patientService: PatientService) {}
 
   @Post()
-  async createPatient(@Body() createPatientDto: CreatePatientDto) {
-    return this.patientService.createPatient(createPatientDto);
+  async createPatient(
+    @Body() createPatientDto: CreatePatientDto,
+    @Query('doctorId') doctorId: string,
+  ) {
+    return this.patientService.createPatient(createPatientDto, doctorId);
   }
 
   @Get('')
