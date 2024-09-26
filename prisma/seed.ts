@@ -65,6 +65,7 @@ async function main() {
       phone: '555-9999',
       dob: new Date('1985-01-01'),
       addressId: address1.id,
+      userId: doctor1.id,
     },
   });
 
@@ -76,6 +77,7 @@ async function main() {
       phone: '555-8888',
       dob: new Date('1990-02-02'),
       addressId: address2.id,
+      userId: doctor1.id,
     },
   });
 

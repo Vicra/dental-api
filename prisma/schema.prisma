@@ -5,122 +5,141 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+    provider = "mysql"
+    url      = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 enum Sex {
-  MALE
-  FEMALE
+    MALE
+    FEMALE
 }
 
 model Address {
-  id       Int       @id @default(autoincrement())
-  street   String
-  city     String
-  country  String
-  phone    String
-  Patient  Patient?
-  Location Location?
+    id       String    @id @default(uuid())
+    street   String
+    city     String
+    country  String
+    phone    String
+    Patient  Patient?
+    Location Location?
+
+    @@map("addresses")
 }
 
 model Patient {
-  id          Int           @id @default(autoincrement())
-  name        String
-  sex         Sex
-  email       String        @unique
-  phone       String
-  dob         DateTime
-  address     Address       @relation(fields: [addressId], references: [id])
-  addressId   Int           @unique
-  appointment Appointment[]
+    id          Int           @id @default(autoincrement())
+    name        String
+    sex         Sex
+    email       String        @unique
+    phone       String
+    dob         DateTime
+    address     Address       @relation(fields: [addressId], references: [id])
+    addressId   String        @unique
+    appointment Appointment[]
+    User        User?         @relation(fields: [userId], references: [id])
+    userId      String?
+
+    @@map("patients")
 }
 
 model Appointment {
-  id             Int           @id @default(autoincrement())
-  patient        Patient       @relation(fields: [patientId], references: [id])
-  patientId      Int
-  doctor         User          @relation(fields: [doctorId], references: [id])
-  doctorId       String
-  dateTime       DateTime
-  location       Location      @relation(fields: [locationId], references: [id])
-  locationId     Int
-  prescription   Prescription? @relation(fields: [prescriptionId], references: [id])
-  prescriptionId Int?          @unique
+    id             Int           @id @default(autoincrement())
+    patient        Patient       @relation(fields: [patientId], references: [id])
+    patientId      Int
+    doctor         User          @relation(fields: [doctorId], references: [id])
+    doctorId       String
+    dateTime       DateTime
+    location       Location      @relation(fields: [locationId], references: [id])
+    locationId     Int
+    prescription   Prescription? @relation(fields: [prescriptionId], references: [id])
+    prescriptionId Int?          @unique
+
+    @@map("appointments")
 }
 
 model Prescription {
-  id          Int                @id @default(autoincrement())
-  patientAge  Int
-  drugs       PrescriptionItem[]
-  Appointment Appointment?
+    id          Int                @id @default(autoincrement())
+    patientAge  Int
+    drugs       PrescriptionItem[]
+    Appointment Appointment?
+
+    @@map("precriptions")
 }
 
 model PrescriptionItem {
-  id             Int           @id @default(autoincrement())
-  medication     Medication    @relation(fields: [medicationId], references: [id])
-  medicationId   Int
-  amount         Int
-  dose           String
-  observation    String
-  Prescription   Prescription? @relation(fields: [prescriptionId], references: [id])
-  prescriptionId Int?
+    id             Int           @id @default(autoincrement())
+    medication     Medication    @relation(fields: [medicationId], references: [id])
+    medicationId   Int
+    amount         Int
+    dose           String
+    observation    String
+    Prescription   Prescription? @relation(fields: [prescriptionId], references: [id])
+    prescriptionId Int?
+
+    @@map("precription_items")
 }
 
 model Location {
-  id          Int           @id @default(autoincrement())
-  name        String
-  address     Address       @relation(fields: [addressId], references: [id])
-  addressId   Int           @unique
-  appointment Appointment[]
+    id          Int           @id @default(autoincrement())
+    name        String
+    address     Address       @relation(fields: [addressId], references: [id])
+    addressId   String        @unique
+    appointment Appointment[]
+
+    @@map("locations")
 }
 
 model Medication {
-  id               Int                @id @default(autoincrement())
-  sku              String?
-  name             String
-  PrescriptionItem PrescriptionItem[]
+    id               Int                @id @default(autoincrement())
+    sku              String?
+    name             String
+    PrescriptionItem PrescriptionItem[]
+
+    @@map("medications")
 }
 
 model User {
-  id          String        @id @default(uuid())
-  email       String        @unique
-  name        String
-  role        Role          @default(DOCTOR)
-  Appointment Appointment[]
-  specialty   Specialties   @default(DENTIST)
+    id          String        @id @default(uuid())
+    email       String        @unique
+    name        String
+    role        Role          @default(DOCTOR)
+    Appointment Appointment[]
+    specialty   Specialties   @default(DENTIST)
+    patients    Patient[]
+
+    @@map("users")
 }
 
 enum Role {
-  ADMIN
-  DOCTOR
-  SECRETARY
+    ADMIN
+    DOCTOR
+    SECRETARY
 }
 
 enum Specialties {
-  ANESTHESIOLOGY
-  CARDIOLOGY
-  DENTIST
-  DERMATOLOGY
-  FORENSIC
-  GYNECOLOGY
-  IMMUNOLOGY
-  INTERNAL
-  NEUROLOGY
-  OPHTALMIC
-  ORTHOPAEDIC
-  OTOLARYNGOLOGY
-  PATHOLOGY
-  PEDIATRIC
-  PLASTIC
-  PSYCHIATRY
-  PSYCOLOGY
-  RADIOLOGY
-  REHABILITATION
-  RHEUMATHOLOGY
-  UROLOGY
+    ANESTHESIOLOGY
+    CARDIOLOGY
+    DENTIST
+    DERMATOLOGY
+    FORENSIC
+    GYNECOLOGY
+    IMMUNOLOGY
+    INTERNAL
+    NEUROLOGY
+    OPHTALMIC
+    ORTHOPAEDIC
+    OTOLARYNGOLOGY
+    PATHOLOGY
+    PEDIATRIC
+    PLASTIC
+    PSYCHIATRY
+    PSYCOLOGY
+    RADIOLOGY
+    REHABILITATION
+    RHEUMATHOLOGY
+    UROLOGY
 }
