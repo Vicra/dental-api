@@ -20,7 +20,7 @@ export class PatientController {
   @Post()
   async createPatient(
     @Body() createPatientDto: CreatePatientDto,
-    @Query('doctorId') doctorId: string,
+    @Query('doctorId') doctorId?: string,
   ) {
     return this.patientService.createPatient(createPatientDto, doctorId);
   }

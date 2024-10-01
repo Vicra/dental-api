@@ -14,8 +14,8 @@ generator client {
 }
 
 enum Sex {
-    MALE @map("M")
-    FEMALE @map("F")
+    MALE     @map("M")
+    FEMALE   @map("F")
     INTERSEX @map("I")
 }
 
@@ -37,9 +37,9 @@ model Patient {
     sex         Sex
     email       String        @unique
     phone       String
-    dob         DateTime
-    address     Address       @relation(fields: [addressId], references: [id])
-    addressId   String        @unique
+    dob         DateTime?
+    address     Address?      @relation(fields: [addressId], references: [id])
+    addressId   String?       @unique
     appointment Appointment[]
     user        User?         @relation(fields: [userId], references: [id])
     userId      String?
@@ -104,13 +104,14 @@ model Medication {
 }
 
 model User {
-    id          String        @id @default(uuid())
-    email       String        @unique
-    name        String
-    role        Role          @default(DOCTOR)
+    id           String        @id @default(uuid())
+    email        String        @unique
+    name         String
+    role         Role          @default(DOCTOR)
     appointments Appointment[]
-    specialty   Specialties   @default(DENTIST)
-    patients    Patient[]
+    specialty    Specialties   @default(DENTIST)
+    patients     Patient[]
+
     @@map("users")
 }
 

@@ -4,6 +4,7 @@ import {
   IsEmail,
   IsEnum,
   IsDateString,
+  IsOptional,
 } from 'class-validator';
 import { CreateAddressDto } from './create-address.dto';
 
@@ -31,8 +32,10 @@ export class CreatePatientDto {
   phone: string;
 
   @IsDateString()
+  @IsOptional()
   dob: string;
 
   @IsNotEmpty()
+  @IsOptional()
   address: CreateAddressDto;
 }

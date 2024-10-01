@@ -7,7 +7,7 @@ import { Prisma, Patient } from '@prisma/client';
 export class PatientService {
   constructor(private prisma: PrismaService) {}
 
-  async createPatient(createPatientDto: any, doctorId: string) {
+  async createPatient(createPatientDto: any, doctorId?: string) {
     const { address, ...patientData } = createPatientDto;
 
     const patientExists = await this.prisma.patient.findUnique({
@@ -17,36 +17,62 @@ export class PatientService {
     });
 
     if (!patientExists) {
-      const doctorExists = await this.prisma.user.findUnique({
-        where: {
-          id: doctorId,
-        },
-      });
-      if (doctorExists != null) {
-        const patient = await this.prisma.patient.create({
-          data: {
-            ...patientData,
-            user: {
-              connect: {
-                id: doctorId,
+      if (!doctorId) {
+        if (address) {
+          const patient = await this.prisma.patient.create({
+            data: {
+              ...patientData,
+              address: {
+                create: {
+                  ...address,
+                },
               },
             },
-            address: {
-              create: {
-                ...address,
-              },
+            include: {
+              address: true,
             },
-          },
-          include: {
-            address: true,
-          },
-        });
-        return patient;
+          });
+          return patient;
+        } else {
+          const patient = await this.prisma.patient.create({
+            data: {
+              ...patientData,
+            },
+          });
+          return patient;
+        }
       } else {
-        throw new BadRequestException('Doctor does not exist', {
-          cause: new Error(),
-          description: 'Check userId',
+        const doctorExists = await this.prisma.user.findUnique({
+          where: {
+            id: doctorId,
+          },
         });
+        if (doctorExists != null) {
+          const patient = await this.prisma.patient.create({
+            data: {
+              ...patientData,
+              user: {
+                connect: {
+                  id: doctorId,
+                },
+              },
+              address: {
+                create: {
+                  ...address,
+                },
+              },
+            },
+            include: {
+              address: true,
+            },
+          });
+          return patient;
+        } else {
+          throw new BadRequestException('Doctor does not exist', {
+            cause: new Error(),
+            description: 'Check userId',
+          });
+        }
       }
     } else {
       throw new BadRequestException('Email already exists', {
